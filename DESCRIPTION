@@ -1,0 +1,12 @@
+Package: Famdenovo
+Type: Package
+Title: Calculate the probability of a TP53 mutation being de novo
+Version: 0.1.0
+Date: 2018-01-31
+Author: Fan Gao, Wenyi Wang, Xuedong Pan
+Depends: LFSPRO
+Maintainer: Fan Gao <fgao3@mdanderson.org>, Wenyi Wang <wwang7@mdanderson.org>
+Description: Function "Famdenovo" calculates the probability of a TP53 mutation being de novo. Pedigree structure, cancer information and mutation information are inputs. Output is the predicted probability for a mutation carrier whose parents are in the pedigree. 
+License: GPL-2
+NeedsCompilation: no
+Packaged: 2018-02-02 01:21:31 UTC; g
