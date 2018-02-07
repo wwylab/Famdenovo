@@ -1,13 +1,13 @@
 \name{Famdenovo}
 \alias{Famdenovo}
 \title{
-  Calculate Pr(denovo) for a TP53 mutation
+  Calculate Pr(denovo|germline mutation, family history)
 }
 \description{
-  Calculate the probability of a TP53 mutation being denovo.
+  Calculate the probability of the de novo status for a germline mutation in familial diseases.
 }
 \usage{
-Famdenovo(family, cancer, mutation, person.id, gene = TP53)
+Famdenovo(family, cancer, mutation, person.id, gene = "TP53")
 }
 \arguments{
 
@@ -62,18 +62,17 @@ library(Famdenovo)
 data(TP53.test1.family)
 data(TP53.test1.cancer)
 data(TP53.test1.mutation)
-person.id <- c(1, 3, 1001, 1002, 1003)
-output1 <- Famdenovo(TP53.test1.family, TP53.test1.cancer, person.id, TP53.test1.mutation,); output1
+person.id <- c(2201, 2203, 3201, 3202, 4203)
+output1 <- Famdenovo(TP53.test1.family, TP53.test1.cancer, person.id, TP53.test1.mutation); output1
 
 # Test case 2
 data(TP53.test2.family)
 data(TP53.test2.cancer)
-person.id <- c("SMN-1186-0000", "SMN-1186-0702", "SMN-1186-0703", "SMN-1186-0701")
+person.id <- c(1, 11, 12, 13)
 output2 <- Famdenovo(TP53.test2.family, TP53.test2.cancer, person.id); output2
 
 # Compare with known denovo/familial status
 data(TP53.test2.counselees)
 valid.person.id <- person.id[person.id \%in\% unique(TP53.test2.counselees$id)]
-TP53.test2.counselees[TP53.test2.counselees$id == valid.person.id, c("id", "cou.state")]
 merge(TP53.test2.counselees[TP53.test2.counselees$id == valid.person.id, c("id", "cou.state")], output2, all.x=T)
 }

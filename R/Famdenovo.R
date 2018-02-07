@@ -6,7 +6,7 @@ Famdenovo <- function(family, cancer, person.id, mutation = NA, gene = "TP53") {
     print("Famdenevoe can only analyze families with TP53 mutation.")
     return()
   }
-  
+
   fam <- family[c("id", "fid", "mid", "gender", "age")]
   fam$fam.id <- 1
   can <- cancer[c("id", "cancer.type", "diag.age")]
@@ -14,17 +14,19 @@ Famdenovo <- function(family, cancer, person.id, mutation = NA, gene = "TP53") {
   
   # family data: add indexes for each family and person
   fam1 <- fam
-  count <- 0
-  for (i in 1:length(unique(fam$fam.id))) {
-    for (j in 1:sum(fam$fam.id == unique(fam$fam.id)[i])){
-      count = count + 1
+  count <- 1
+  fams <- unique(fam$fam.id)
+  for (i in 1:length(fams)) {
+    for (j in 1:sum(fam$fam.id == fams[i])){
       fam1$index.fam[count]  <- i
       fam1$index.per[count]  <- j
+      count = count + 1
     }
   }
   
-  fam.tp <- merge(fam1, data.frame(fam.id=fam1$fam.id, fid=fam1$id, index.f=fam1$index.per), c("fam.id", "fid"), all.x=T)
-  fam2 <- merge(fam.tp, data.frame(fam.id=fam1$fam.id, mid=fam1$id, index.m=fam1$index.per), c("fam.id", "mid"), all.x=T)
+  # family data: add indexes for father and mother
+  fam2 <- merge(fam1, data.frame(fam.id=fam1$fam.id, fid=fam1$id, index.f=fam1$index.per), c("fam.id", "fid"), all.x=T)
+  fam2 <- merge(fam2, data.frame(fam.id=fam1$fam.id, mid=fam1$id, index.m=fam1$index.per), c("fam.id", "mid"), all.x=T)
   fam2[is.na(fam2)] <- 0
   
   # cancer data: add indexes for family, person, and cancer type
@@ -33,12 +35,11 @@ Famdenovo <- function(family, cancer, person.id, mutation = NA, gene = "TP53") {
   can2 <- merge(can1, LFSpro.cancer.type2, "cancer.type", all.x=T)
   
   # combine family and cancer data
-  fam3 <- fam2[order(fam2$index.fam, fam2$index.per),]
-  fam3 <- data.frame(fam.id=fam3$fam.id, id=fam3$index.per, fid=fam3$index.f, mid=fam3$index.m, gender=fam3$gender, age=fam3$age)
-  can3 <- can2[order(can2$index.fam, can2$index.per),]
-  can3 <- data.frame(fam.id=can3$fam.id, id=can3$index.per, cancer.type=can3$index.can, diag.age=can3$diag.age)
-  fam.can <- CombineData(fam3, can3) 
+  fam3 <- data.frame(fam.id=fam2$fam.id, id=fam2$index.per, fid=fam2$index.f, mid=fam2$index.m, gender=fam2$gender, age=fam2$age, stringsAsFactors=F)
+  can3 <- data.frame(fam.id=can2$fam.id, id=can2$index.per, cancer.type=can2$index.can, diag.age=can2$diag.age)
+  fam.can <- CombineData(fam3, can3)
 
+  # mutation data
   if (sum(is.na(mutation))) {
     print ("Warning: Famdenovo output is only applicatble to mutation carriers")
     counselees <- data.frame(fam.id=1, id=person.id, stringsAsFactors=F)
@@ -47,22 +48,24 @@ Famdenovo <- function(family, cancer, person.id, mutation = NA, gene = "TP53") {
     mut <- mutation[c("id", "mut.state")]
     mut$fam.id <- 1
     
-    # family and mutation data: add mutation state of father's and mother's
+    # family and mutation data: add mutation states of father and mother
     fam.mut1 <- merge(fam2, data.frame(fam.id=mut$fam.id, id=mut$id, mut=mut$mut.state), c("fam.id", "id"), all.x=T)
-    fam.mut.tp <- merge(fam.mut1, data.frame(fam.id=fam.mut1$fam.id, fid=fam.mut1$id, mut.f=fam.mut1$mut), c("fam.id", "fid"), all.x=T)
-    fam.mut2 <- merge(fam.mut.tp, data.frame(fam.id=fam.mut1$fam.id, mid=fam.mut1$id, mut.m=fam.mut1$mut), c("fam.id", "mid"), all.x=T)
+    fam.mut2 <- merge(fam.mut1, data.frame(fam.id=fam.mut1$fam.id, fid=fam.mut1$id, mut.f=fam.mut1$mut), c("fam.id", "fid"), all.x=T)
+    fam.mut2 <- merge(fam.mut2, data.frame(fam.id=fam.mut1$fam.id, mid=fam.mut1$id, mut.m=fam.mut1$mut), c("fam.id", "mid"), all.x=T)
     
-    # counselees: seperate by familial, de novo and unknown states and invalid person id
+    # counselees: denovo status
     fam.mut3 <- fam.mut2
     for (i in 1:nrow(fam.mut2)) {
-      if(!is.na(fam.mut2$mut[i])) {
-        if (fam.mut2$mut[i] %in% c("M")) {
-          if (fam.mut2$mut.f[i] %in% c("M") || fam.mut2$mut.m[i] %in% c("M")) fam.mut3$state[i] <- "familial"
-          else if(fam.mut2$mut.f[i] %in% c("W") && fam.mut2$mut.f[i] %in% c("W")) fam.mut3$state[i] <- "de novo"
-          else fam.mut3$state[i] <- "unknown"
+      if (fam.mut2$mut[i] %in% c("M")) {
+        if (fam.mut2$mut.f[i] %in% c("M") || fam.mut2$mut.m[i] %in% c("M")) {
+          fam.mut3$state[i] <- "familial"
+        } else if (fam.mut2$mut.f[i] %in% c("W") && fam.mut2$mut.m[i] %in% c("W")) {
+          fam.mut3$state[i] <- "denovo"
+        } else {
+          fam.mut3$state[i] <- "unknown"
         }
-        else
-          fam.mut3[i, "state"] <- NA
+      } else {
+        fam.mut3$state[i] <- NA
       }
     }
     counselees <- fam.mut3[!is.na(fam.mut3$state), c("fam.id", "id", "index.fam", "index.per", "state")]
@@ -111,7 +114,7 @@ Famdenovo <- function(family, cancer, person.id, mutation = NA, gene = "TP53") {
     pval[i] <-  p_Gm0 * p_Gf0 * p_mod_Gc1/ p_Gc1
   }
   
-  pred_prob <- data.frame(id=counselees$id, prob.denovo=pval)
-  return(pred_prob)
+  pred.prob <- data.frame(id=counselees$id, prob.denovo=pval); pred.prob
+  return(pred.prob)
 }
 
