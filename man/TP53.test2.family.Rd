@@ -2,7 +2,7 @@
 \alias{TP53.test2.family}
 \docType{data}
 \title{
-Family information data MD Anderson Cancer Center
+Family information data
 }
 \description{
 Family information data used in function Famdenovo

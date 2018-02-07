@@ -2,7 +2,7 @@
 \alias{TP53.test2.counselees}
 \docType{data}
 \title{
-The information of De novo or familial status (MA Anderson Cancer Center)
+The information of De novo or familial status
 }
 \description{
 Information of of De novo or familial status used in function Famdenovo
