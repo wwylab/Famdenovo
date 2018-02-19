@@ -42,7 +42,7 @@ Famdenovo(family, cancer, mutation, person.id, gene = "TP53")
 
 \item{person.id}{The input should be either character string(s) or numrical value(s) of the person(s) you want to analyze.}
 
-\item{gene}{The input should be character string(s). The default value is "TP53". We will add other genes in the future. .}
+\item{gene}{The input should be character string(s). The default value is "TP53". We will add other genes in the future.}
 }
 
 \details{
@@ -52,7 +52,7 @@ The inputs are family data, cancer data and mutation data and the person(s) you 
 \references{
 Peng G, Bojadzieva J, Ballinger ML, et al: Estimating TP53 Mutation Carrier Probability in Families with Li-Fraumeni Syndrome Using LFSPRO. Cancer Epidemiology, Biomarkers & Prevention, 2017
 
-Xuedong Pan, Elissa B. Dodd, Fan Gao, et al: A general probabilistic algorithm to predict de novo mutations in familial diseases as demonstrated in Li-Fraumeni Syndrome, Statistics in Oncology, 2018
+Xuedong Pan, Elissa B. Dodd, Fan Gao, et al: A general probabilistic algorithm to predict de novo mutations in familial diseases as demonstrated in Li-Fraumeni Syndrome, paper in submission, 2018
 }
 
 \examples{

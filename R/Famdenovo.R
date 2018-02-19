@@ -1,7 +1,5 @@
-require(LFSPRO)
-
 Famdenovo <- function(family, cancer, person.id, mutation = NA, gene = "TP53") {
-  
+
   if (gene != "TP53") {
     print("Famdenevoe can only analyze families with TP53 mutation.")
     return()
@@ -31,8 +29,7 @@ Famdenovo <- function(family, cancer, person.id, mutation = NA, gene = "TP53") {
   
   # cancer data: add indexes for family, person, and cancer type
   can1 <- merge(can, fam1[c("fam.id", "id", "index.fam", "index.per")], c("fam.id", "id"), all.x=T)
-  LFSpro.cancer.type2 <- data.frame(cancer.type=names(LFSpro.cancer.type), index.can=LFSpro.cancer.type, stringsAsFactors=F)
-  can2 <- merge(can1, LFSpro.cancer.type2, "cancer.type", all.x=T)
+  can2 <- merge(can1, LFSpro.cancer.type, "cancer.type", all.x=T)
   
   # combine family and cancer data
   fam3 <- data.frame(fam.id=fam2$fam.id, id=fam2$index.per, fid=fam2$index.f, mid=fam2$index.m, gender=fam2$gender, age=fam2$age, stringsAsFactors=F)
@@ -56,10 +53,10 @@ Famdenovo <- function(family, cancer, person.id, mutation = NA, gene = "TP53") {
     # counselees: denovo status
     fam.mut3 <- fam.mut2
     for (i in 1:nrow(fam.mut2)) {
-      if (fam.mut2$mut[i] %in% c("M")) {
-        if (fam.mut2$mut.f[i] %in% c("M") || fam.mut2$mut.m[i] %in% c("M")) {
+      if (fam.mut2$mut[i] %in% "M") {
+        if (fam.mut2$mut.f[i] %in% "M" || fam.mut2$mut.m[i] %in% "M") {
           fam.mut3$state[i] <- "familial"
-        } else if (fam.mut2$mut.f[i] %in% c("W") && fam.mut2$mut.m[i] %in% c("W")) {
+        } else if (fam.mut2$mut.f[i] %in% "W" && fam.mut2$mut.m[i] %in% "W") {
           fam.mut3$state[i] <- "denovo"
         } else {
           fam.mut3$state[i] <- "unknown"
@@ -82,36 +79,47 @@ Famdenovo <- function(family, cancer, person.id, mutation = NA, gene = "TP53") {
   
   pval <- numeric()
   for(i in 1:nrow(counselees)) {
-    FaDFta <- fam.can[[counselees$index.fam[i]]]
     counselee.id <- counselees$index.per[i]
+    for(j in 1:length(fam.can)) {
+      if (unique(fam.can[[j]]$fam.id) == counselees$fam.id[i]) break
+    }
+    FaDFta <- fam.can[[j]]
     ped <- data.frame(ID=FaDFta$id, Gender=FaDFta$gender, FatherID=FaDFta$fid, MotherID=FaDFta$mid)
     
     # modify likelihood
     lik <- calLK(FaDFta, LFSpenet.2010)
-    lik_mod <- lik
-    lik_mod[ped$ID == ped$FatherID[ped$ID == counselee.id], 2:3] <- 0
-    lik_mod[ped$ID == ped$MotherID[ped$ID == counselee.id], 2:3] <- 0
-    
-    # P(Gc=1|Gm=0,Gf=0,D,P) = p_mod_counselee[2] + p_mod_counselee[3]
-    p_mod_counselee <- peelingRC(allef, lik_mod, ped, counselee.id, 1, mRate)
-    p_mod_Gc1 <- p_mod_counselee[2] + p_mod_counselee[3]
+    lik.mod <- lik
+    lik.mod[ped$ID == ped$FatherID[ped$ID == counselee.id], 2:3] <- 0
+    lik.mod[ped$ID == ped$MotherID[ped$ID == counselee.id], 2:3] <- 0
     
     # P(Gc=1|D,P)
-    p_counselee <- peelingRC(allef, lik, ped, counselee.id, 1, mRate)
-    p_Gc1 <- p_counselee[2] + p_counselee[3]
+    p.counselee <- peelingRC(allef, lik, ped, counselee.id, 1, mRate)
+    p.Gc1 <- p.counselee[2] + p.counselee[3]
+    
+    # P(Gc=1|Gm=0,Gf=0,D,P)
+    p.counselee.mod <- peelingRC(allef, lik.mod, ped, counselee.id, 1, mRate)
+    p.Gc1.mod <- p.counselee.mod[2] + p.counselee.mod[3]
     
     # P(Gf=0|D,P)
-    tp_id <- ped$FatherID[ped$ID == counselee.id]
-    p_father <- peelingRC(allef, lik, ped, tp_id, 1, mRate)
-    p_Gf0 <- p_father[1]
+    fid <- ped$FatherID[ped$ID == counselee.id]
+    if (fid == 0) {
+      p.Gf0 <- 1- (1 - MAF)^2
+    } else {
+      p.father <- peelingRC(allef, lik, ped, fid, 1, mRate)
+      p.Gf0 <- p.father[1]
+    }
     
     # P(Gm=0|D,P)
-    tp_id <- ped$MotherID[ped$ID == counselee.id]
-    p_mother <- peelingRC(allef, lik, ped, tp_id, 1, mRate)
-    p_Gm0 <- p_mother[1]
+    mid <- ped$MotherID[ped$ID == counselee.id]
+    if (mid == 0) {
+      p.Gm0 <- 1- (1 - MAF)^2
+    } else {
+      p.mother <- peelingRC(allef, lik, ped, mid, 1, mRate)
+      p.Gm0 <- p.mother[1]
+    }
     
     # P(Gc is denovo|Gc is a germline, D, P) = P(Gm=0|D,P) * P(Gf=0|D,P) * P(Gc=1|Gm=0,Gf=0,D,P) / P(Gc=1|D,P)
-    pval[i] <-  p_Gm0 * p_Gf0 * p_mod_Gc1/ p_Gc1
+    pval[i] <-  p.Gm0 * p.Gf0 * p.Gc1.mod/ p.Gc1
   }
   
   pred.prob <- data.frame(id=counselees$id, prob.denovo=pval); pred.prob
