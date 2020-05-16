@@ -1,0 +1,1 @@
+utils::globalVariables(c("LFSpro.cancer.type", "LFSpenet.2010"))
