@@ -15,6 +15,7 @@ List. Two component of list indicates the penetrance of male and female (fMX: ma
 Wu, C. C., et al. (2010). Effects of measured susceptibility genes on cancer risk in family studies. \emph{Hum Genet} \bold{127(3)}: 349-357.
 }
 \examples{
+data(LFSpenet.2010)
 LFSpenet.2010
 }
 \keyword{datasets}

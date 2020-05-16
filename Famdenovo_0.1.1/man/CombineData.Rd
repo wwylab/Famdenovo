@@ -33,15 +33,19 @@ Gang Peng
 
 \examples{
 # convert cancer type to specific number and check the cancer type
+data(cancer.data)
+data(LFSpro.cancer.type)
+data(fam.data)
+
 num.cancer <- nrow(cancer.data)
 cancer.type.num <- rep(-1, num.cancer)
 for(i in 1:num.cancer){
-  tmp <- LFSpro.cancer.type[cancer.data$cancer.type[i]]
+  tmp <- LFSpro.cancer.type[LFSpro.cancer.type[,1]==cancer.data$cancer.type[i],2]
   if(is.na(tmp)){
     print(paste("Cannot find cancer ", cancer.data$cancer.type[i], 
                   " in the LFSpro predefined cancer type", sep = ""))
     print("LFSpro predefined cancer types are: ")
-    print(cancer.type.all)
+    print(LFSpro.cancer.type[,1])
     print("Please check the input cancer information data.")
       
     num.counselee <- nrow(counselee.id)

@@ -43,7 +43,8 @@ Gang Peng
 }
 
 \examples{
-  fam.cancer.data <- CombineData(fam.data, cancer.data)
+  data(fam.cancer.data)
+  data(LFSpenet.2010)
   allef <- allef.g <- list(c(0.9997,0.0003))
   mRate.g <- 6e-05
   FamData <- fam.cancer.data[[1]]

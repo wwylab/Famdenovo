@@ -6,16 +6,16 @@ peelingRC <- function(allef, LIK, ped, counselee.id,nloci=1, mRate=0){
   #  two alleles (allele frequency is 0.1 and 0.9) for gene 1 
   #  and three alleles (allele frequncy is 0.2, 0.2 and 0.6) for gene 2.
   #  allef = list(c(0.1,0.9),c(0.2,0.2,0.6))
-  ## LIK: likelihood for each kinds of genotype
+  ## LIK: likelihood for each genotype combination
   ## ped: pedigree structure, data frame, ID, Gender, FatherID, MotherID
   #  Gender: Male, 1; Female, 0
-  ## counselee.id: the ID of sample who you want to estimate the posterior
+  ## counselee.id: the ID of sample for which you want to estimate the posterior
   #  probability. If you want to estimate multiple samples at the same time,
   #  just set counselee.id as a vector of ID for all samples.
   ## nloci: number of loci
   ## mRate: muation rate. If all loci/genes have same mutation rate, you just
-  #  need to set one value for mRate. If loci/geens have different mutation rate,
-  #  set mRate as a vector of different mutation rate for each locus/gene.
+  #  need to set one value for mRate. If loci/geens have different mutation rates,
+  #  set mRate as a vector of different mutation rates for each locus/gene.
   
   #input check
   if(length(allef)!=nloci){
@@ -87,7 +87,7 @@ peelingRC <- function(allef, LIK, ped, counselee.id,nloci=1, mRate=0){
   }
   else{
     if(length(mRate)!=nloci){
-      sprintf("Parameter mRate and nloci is not set correctly!")
+      sprintf("Parameters mRate and nloci are not set correctly!")
       return
     }
   }

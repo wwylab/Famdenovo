@@ -1,7 +1,7 @@
 Famdenovo <- function(family, cancer, person.id, mutation = NA, gene = "TP53") {
 
   if (gene != "TP53") {
-    print("Famdenevoe can only analyze families with TP53 mutation.")
+    print("Famdenovo currently takes families with germline mutations in TP53. For new functions for other genes, e.g., BRCA1/2, please check http://https://bioinformatics.mdanderson.org/public-software/famdenovo/.")
     return()
   }
 
@@ -38,7 +38,7 @@ Famdenovo <- function(family, cancer, person.id, mutation = NA, gene = "TP53") {
 
   # mutation data
   if (sum(is.na(mutation))) {
-    print ("Warning: Famdenovo output is only applicatble to mutation carriers")
+    print ("Warning: Famdenovo output is only applicable to mutation carriers.")
     counselees <- data.frame(fam.id=1, id=person.id, stringsAsFactors=F)
     counselees <- merge(counselees, fam1[c("fam.id", "id", "index.fam", "index.per")], c("fam.id", "id"), all.x=T)
   } else {

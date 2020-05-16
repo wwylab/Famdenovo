@@ -4,8 +4,7 @@ Title: Calculate Pr(denovo|germline mutation, family history)
 Version: 0.1.1
 Date: 2018-02-16
 Author: Fan Gao, Wenyi Wang, Xuedong Pan
-Maintainer: Fan Gao <fgao3@mdanderson.org>, Wenyi Wang <wwang7@mdanderson.org>
-Description: Function "Famdenovo" calculates the probability of the de novo status for a germline mutation in familial diseases. Pedigree structure, cancer information and mutation information are inputs. Output is the predicted probability for a mutation carrier whose parents are in the pedigree. 
+Maintainer: Matthew Montierth <mdmontierth@mdanderson.org>, Wenyi Wang <wwang7@mdanderson.org>
+Description:  This is a software that predicts the de novo status of deleterious germline mutation(s) in Mendelian diseases based on family history. 
 License: GPL-2
 NeedsCompilation: yes
-Packaged: 2018-02-16 21:49:44 UTC; fgao3

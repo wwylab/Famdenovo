@@ -21,6 +21,7 @@ List. Each component of the list stores the family and cancer information of one
   }
 }
 \examples{
+data(fam.cancer.data)
 fam.cancer.data
 }
 \keyword{datasets}

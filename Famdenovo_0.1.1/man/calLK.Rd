@@ -30,7 +30,8 @@ Gang Peng
 \code{\link{lkNoneAffect}}, \code{\link{peelingRC}}
 }
 \examples{
-fam.cancer.data <- CombineData(fam.data, cancer.data)
+data(fam.cancer.data)
+data(LFSpenet.2010)
 calLK(fam.cancer.data[[1]], LFSpenet.2010)
 }
 

@@ -40,6 +40,7 @@ A vector with names of different cancer types.
 }
 
 \examples{
+data(LFSpro.cancer.type)
 LFSpro.cancer.type
 }
 \keyword{datasets}

@@ -21,6 +21,7 @@ Cancer information data storing the cancer type and diagnosed date
 \code{\link{LFSpro.cancer.type}}
 }
 \examples{
+data(cancer.data)
 cancer.data
 }
 \keyword{datasets}

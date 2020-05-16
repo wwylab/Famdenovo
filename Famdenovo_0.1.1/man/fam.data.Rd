@@ -26,6 +26,7 @@ Family id could include characters, but id, father id and mother id must be inte
 \code{\link{cancer.data}}
 }
 \examples{
+data(fam.data)
 fam.data
 }
 \keyword{datasets}

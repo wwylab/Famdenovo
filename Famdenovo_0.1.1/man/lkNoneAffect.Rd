@@ -30,6 +30,7 @@ Gang Peng
 \code{\link{calLK}}
 }
 \examples{
+data(LFSpenet.2010)
 lkNoneAffect(LFSpenet.2010$fFX, 50)
 }
 

@@ -87,7 +87,7 @@ calLK <- function(fam.cancer.data, penetrance.all){
 lkNoneAffect <- function(penetrance, age){
   # calculate the likelihood for unaffected sample
   # Args:
-  #   age: sample's age when he/she still doesn't get disease
+  #   age: sample's age when he/she still doesn't have disease
   #
   # Returns:
   #   likelihood
